@@ -30,4 +30,9 @@ class Product {
           : [],
     );
   }
+
+  @override
+  String toString() {
+    return 'Product{id: $id, title: $title, description: $description, category: $category, price: $price, thumbnail: $thumbnail, images: $images}';
+  }
 }
