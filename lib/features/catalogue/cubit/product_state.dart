@@ -9,9 +9,10 @@ class ProductInitial extends ProductState {}
 class ProductsLoading extends ProductState {}
 
 class ProductsLoaded extends ProductState {
-  final List<Product> products;
+  final List<Product> allProducts;
+  final List<Product> displayProducts;
 
-  ProductsLoaded(this.products);
+  ProductsLoaded({required this.allProducts, required this.displayProducts});
 }
 
 class ProductsError extends ProductState {

@@ -1,0 +1,90 @@
+import 'package:flutter/material.dart';
+import 'package:product_catalogue_app/core/constants/app_constants.dart';
+import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
+
+class ProductCard extends StatelessWidget {
+  final Product product;
+  final bool isFavourite;
+  final VoidCallback onFavouriteToggle;
+  final VoidCallback onTap;
+
+  const ProductCard({
+    super.key,
+    required this.product,
+    required this.isFavourite,
+    required this.onFavouriteToggle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
+
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Image.network(
+                  product.thumbnail,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.broken_image, size: 40),
+                  ),
+                ),
+                Positioned(
+                  right: 6,
+                  child: IconButton(
+                    onPressed: onFavouriteToggle,
+                    icon: Icon(
+                      isFavourite ? Icons.favorite : Icons.favorite_border,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        // Category
+                        // Add somee styling
+                        Text(
+                          product.category.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        // Product Title
+                        Text(product.title, maxLines: 2, overflow: .ellipsis),
+                      ],
+                    ),
+                    // Price
+                    Text(
+                      '${AppConstants.currency}${product.price.toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

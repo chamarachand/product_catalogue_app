@@ -14,7 +14,7 @@ class ProductCubit extends Cubit<ProductState> {
 
     try {
       final products = await repository.getProducts();
-      emit(ProductsLoaded(products));
+      emit(ProductsLoaded(allProducts: products, displayProducts: products));
     } catch (e, stacktrace) {
       debugPrint("fetchProducts error $e");
       debugPrint("fetchProducts error stack $stacktrace");
