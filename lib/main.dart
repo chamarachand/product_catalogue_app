@@ -24,14 +24,21 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.productRepository});
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: BlocProvider(
-        create: (_) =>
-            ProductCubit(repository: productRepository)..fetchProducts(),
-        child: const ProductListPage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              ProductCubit(repository: productRepository)..fetchProducts(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Product Catalogue',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        ),
+        home: const ProductListPage(),
       ),
     );
   }

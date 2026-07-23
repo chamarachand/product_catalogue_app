@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_cubit.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_state.dart';
+import 'package:product_catalogue_app/features/catalogue/presentation/pages/product_details_page.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/product_card.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/search_box.dart';
 
@@ -49,6 +50,7 @@ class ProductListPage extends StatelessWidget {
                       crossAxisCount: 2,
                       childAspectRatio: 0.65,
                     ),
+
                     itemCount: state.displayProducts.length,
                     itemBuilder: (context, index) {
                       final product = state.displayProducts[index];
@@ -64,7 +66,15 @@ class ProductListPage extends StatelessWidget {
                             product.id,
                           );
                         },
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ProductDetailsPage(product: product),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
