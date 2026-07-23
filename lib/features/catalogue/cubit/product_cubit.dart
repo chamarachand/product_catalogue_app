@@ -14,7 +14,15 @@ class ProductCubit extends Cubit<ProductState> {
 
     try {
       final products = await repository.getProducts();
-      emit(ProductsLoaded(allProducts: products, displayProducts: products));
+      final savedFavourites = repository.getFavouriteIds();
+
+      emit(
+        ProductsLoaded(
+          allProducts: products,
+          displayProducts: products,
+          favouriteIds: savedFavourites,
+        ),
+      );
     } catch (e, stacktrace) {
       debugPrint("fetchProducts error $e");
       debugPrint("fetchProducts error stack $stacktrace");
@@ -36,12 +44,24 @@ class ProductCubit extends Cubit<ProductState> {
                 )
                 .toList();
 
-      emit(
-        ProductsLoaded(
-          allProducts: currentState.allProducts,
-          displayProducts: filtered,
-        ),
-      );
+      emit(currentState.copyWith(displayProducts: filtered));
+    }
+  }
+
+  Future<void> toggleFavourite(int productId) async {
+    if (state is ProductsLoaded) {
+      final currentState = state as ProductsLoaded;
+      final favouriteIds = Set<int>.from(currentState.favouriteIds);
+
+      if (favouriteIds.contains(productId)) {
+        favouriteIds.remove(productId);
+      } else {
+        favouriteIds.add(productId);
+      }
+
+      emit(currentState.copyWith(favouriteIds: favouriteIds));
+
+      await repository.saveFavouriteIds(favouriteIds);
     }
   }
 }

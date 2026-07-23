@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_cubit.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_state.dart';
-import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/product_card.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/search_box.dart';
 
@@ -52,12 +51,19 @@ class ProductListPage extends StatelessWidget {
                     ),
                     itemCount: state.displayProducts.length,
                     itemBuilder: (context, index) {
-                      final Product product = state.displayProducts[index];
+                      final product = state.displayProducts[index];
+                      final isFavourite = state.favouriteIds.contains(
+                        product.id,
+                      );
 
                       return ProductCard(
                         product: product,
-                        isFavourite: false,
-                        onFavouriteToggle: () {},
+                        isFavourite: isFavourite,
+                        onFavouriteToggle: () {
+                          context.read<ProductCubit>().toggleFavourite(
+                            product.id,
+                          );
+                        },
                         onTap: () {},
                       );
                     },

@@ -7,13 +7,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:product_catalogue_app/core/services/local_storage_service.dart';
+import 'package:product_catalogue_app/features/catalogue/data/repository/product_repository.dart';
 
 import 'package:product_catalogue_app/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final localStorageService = LocalStorageService(prefs);
+
+    final productRepository = ProductRepository(
+      localStorageService: localStorageService,
+    );
+
+    await tester.pumpWidget(MyApp(productRepository: productRepository));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

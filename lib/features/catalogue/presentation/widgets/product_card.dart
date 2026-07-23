@@ -44,6 +44,7 @@ class ProductCard extends StatelessWidget {
                     onPressed: onFavouriteToggle,
                     icon: Icon(
                       isFavourite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavourite ? Colors.red : null,
                     ),
                   ),
                 ),

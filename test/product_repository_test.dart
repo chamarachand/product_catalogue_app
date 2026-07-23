@@ -1,18 +1,27 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:product_catalogue_app/core/services/api_service.dart';
+import 'package:product_catalogue_app/core/services/local_storage_service.dart';
 import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
 import 'package:product_catalogue_app/features/catalogue/data/repository/product_repository.dart';
 
 class MockApiService extends Mock implements ApiService {}
 
+class MockLocalStorageService extends Mock implements LocalStorageService {}
+
 void main() {
   late MockApiService mockApiService;
+  late MockLocalStorageService mockLocalStorageService;
   late ProductRepository repository;
 
   setUp(() {
     mockApiService = MockApiService();
-    repository = ProductRepository(apiService: mockApiService);
+    mockLocalStorageService = MockLocalStorageService();
+
+    repository = ProductRepository(
+      apiService: mockApiService,
+      localStorageService: mockLocalStorageService,
+    );
   });
 
   group('ProductRepository Unit Tests', () {
