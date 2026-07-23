@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:product_catalogue_app/core/constants/app_constants.dart';
 import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
@@ -30,12 +31,25 @@ class ProductCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.network(
-                  product.thumbnail,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.broken_image, size: 40),
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: Hero(
+                    tag: 'product-image-${product.id}',
+                    child: CachedNetworkImage(
+                      imageUrl: product.thumbnail,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.broken_image, size: 40),
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(

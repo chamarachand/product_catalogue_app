@@ -45,14 +45,24 @@ class ProductDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: CachedNetworkImage(
-                imageUrl: product.thumbnail,
-                height: 300,
-                fit: BoxFit.contain,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) =>
-                    const Icon(Icons.image_not_supported, size: 80),
+              child: Hero(
+                tag: 'product-image-${product.id}',
+                child: CachedNetworkImage(
+                  imageUrl: product.images.isNotEmpty
+                      ? product.images.first
+                      : product.thumbnail,
+                  height: 300,
+                  fit: BoxFit.contain,
+                  fadeInDuration: Duration.zero,
+                  // placeholder: (context, url) =>
+                  //     const Center(child: CircularProgressIndicator()),
+                  placeholder: (context, url) => CachedNetworkImage(
+                    imageUrl: product.thumbnail,
+                    fit: BoxFit.contain,
+                  ),
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.image_not_supported, size: 80),
+                ),
               ),
             ),
 
