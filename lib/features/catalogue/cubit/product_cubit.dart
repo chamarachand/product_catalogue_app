@@ -22,4 +22,26 @@ class ProductCubit extends Cubit<ProductState> {
       emit(ProductsError("Unable to load products. Please try again later"));
     }
   }
+
+  void searchProducts(String query) {
+    if (state is ProductsLoaded) {
+      final currentState = state as ProductsLoaded;
+
+      final filtered = query.trim().isEmpty
+          ? currentState.allProducts
+          : currentState.allProducts
+                .where(
+                  (product) =>
+                      product.title.toLowerCase().contains(query.toLowerCase()),
+                )
+                .toList();
+
+      emit(
+        ProductsLoaded(
+          allProducts: currentState.allProducts,
+          displayProducts: filtered,
+        ),
+      );
+    }
+  }
 }

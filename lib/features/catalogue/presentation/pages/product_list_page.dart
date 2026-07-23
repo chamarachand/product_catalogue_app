@@ -4,6 +4,7 @@ import 'package:product_catalogue_app/features/catalogue/cubit/product_cubit.dar
 import 'package:product_catalogue_app/features/catalogue/cubit/product_state.dart';
 import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/product_card.dart';
+import 'package:product_catalogue_app/features/catalogue/presentation/widgets/search_box.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -14,19 +15,7 @@ class ProductListPage extends StatelessWidget {
       appBar: AppBar(title: const Text("Catalog"), centerTitle: true),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search Products...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (value) {},
-            ),
-          ),
+          const SearchBox(),
           Expanded(
             child: BlocBuilder<ProductCubit, ProductState>(
               builder: (context, state) {
