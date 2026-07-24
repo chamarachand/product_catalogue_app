@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:product_catalogue_app/core/constants/url_constants.dart';
 
 class ApiService {
   Future<List<dynamic>> fetchProducts() async {
     const String baseUrl = '${UrlConstants.baseUrl}${UrlConstants.products}';
-    print("baseUrl $baseUrl");
+    debugPrint("baseUrl $baseUrl");
     final uri = Uri.parse(baseUrl);
 
     late final http.Response response;

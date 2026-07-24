@@ -57,7 +57,7 @@ class ProductDetailsPage extends StatelessWidget {
                         isWideScreen: isWideScreen,
                       ),
                     ),
-                    SizedBox(width: 30),
+                    const SizedBox(width: 30),
                     Expanded(flex: 5, child: _ProductInfo(product: product)),
                   ],
                 );
