@@ -40,65 +40,106 @@ class ProductDetailsPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Hero(
-                tag: 'product-image-${product.id}',
-                child: CachedNetworkImage(
-                  imageUrl: product.images.isNotEmpty
-                      ? product.images.first
-                      : product.thumbnail,
-                  height: 300,
-                  fit: BoxFit.contain,
-                  fadeInDuration: Duration.zero,
-                  // placeholder: (context, url) =>
-                  //     const Center(child: CircularProgressIndicator()),
-                  placeholder: (context, url) => CachedNetworkImage(
-                    imageUrl: product.thumbnail,
-                    fit: BoxFit.contain,
-                  ),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Icons.image_not_supported, size: 80),
-                ),
-              ),
-            ),
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isWideScreen = constraints.maxWidth > 600;
 
-            const SizedBox(height: 24),
-
-            Text(
-              product.title,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-
-            const SizedBox(height: 12),
-
-            Text(
-              '${AppConstants.currency}${product.price.toStringAsFixed(2)}',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            Chip(label: Text(product.category.toUpperCase())),
-
-            const SizedBox(height: 24),
-
-            Text('Description', style: Theme.of(context).textTheme.titleMedium),
-
-            const SizedBox(height: 8),
-
-            Text(
-              product.description,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ],
+              if (isWideScreen) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: _ProductImage(
+                        product: product,
+                        isWideScreen: isWideScreen,
+                      ),
+                    ),
+                    SizedBox(width: 30),
+                    Expanded(flex: 5, child: _ProductInfo(product: product)),
+                  ],
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ProductImage(product: product, isWideScreen: false),
+                    const SizedBox(height: 24),
+                    _ProductInfo(product: product),
+                  ],
+                );
+              }
+            },
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _ProductImage extends StatelessWidget {
+  final Product product;
+  final bool isWideScreen;
+
+  const _ProductImage({required this.product, required this.isWideScreen});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Hero(
+        tag: 'product-image-${product.id}',
+        child: CachedNetworkImage(
+          imageUrl: product.images.isNotEmpty
+              ? product.images.first
+              : product.thumbnail,
+          height: isWideScreen ? 400 : 300,
+          fit: BoxFit.contain,
+          fadeInDuration: Duration.zero,
+          placeholder: (context, url) => CachedNetworkImage(
+            imageUrl: product.thumbnail,
+            fit: BoxFit.contain,
+          ),
+          errorWidget: (context, url, error) =>
+              const Icon(Icons.image_not_supported, size: 80),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductInfo extends StatelessWidget {
+  final Product product;
+
+  const _ProductInfo({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(product.title, style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 12),
+          Text(
+            '${AppConstants.currency}${product.price.toStringAsFixed(2)}',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Chip(label: Text(product.category.toUpperCase())),
+          const SizedBox(height: 24),
+          Text('Description', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Text(
+            product.description,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ],
       ),
     );
   }

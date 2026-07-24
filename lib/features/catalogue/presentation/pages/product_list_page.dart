@@ -15,7 +15,12 @@ class ProductListPage extends StatelessWidget {
       appBar: AppBar(title: const Text("Catalog"), centerTitle: true),
       body: Column(
         children: [
-          const SearchBox(),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: const SearchBox(),
+            ),
+          ),
           Expanded(
             child: BlocBuilder<ProductCubit, ProductState>(
               builder: (context, state) {
@@ -46,8 +51,9 @@ class ProductListPage extends StatelessWidget {
                   }
 
                   return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 220,
                       childAspectRatio: 0.65,
                     ),
 
