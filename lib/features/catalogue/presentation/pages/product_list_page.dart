@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_cubit.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_state.dart';
+import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/pages/product_details_page.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/product_card.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/search_box.dart';
@@ -29,19 +30,9 @@ class ProductListPage extends StatelessWidget {
                 }
 
                 if (state is ProductsError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: .center,
-                      children: [
-                        Text(state.message),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<ProductCubit>().fetchProducts();
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                  return _ProductErrorView(
+                    msg: state.message,
+                    onRetry: () => context.read<ProductCubit>().fetchProducts(),
                   );
                 }
 
@@ -49,62 +40,14 @@ class ProductListPage extends StatelessWidget {
                   if (state.displayProducts.isEmpty) {
                     final isSearchResultsEmpty = state.allProducts.isNotEmpty;
 
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            isSearchResultsEmpty
-                                ? Icons.search_off
-                                : Icons.inventory_2_outlined,
-                            size: 64,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            isSearchResultsEmpty
-                                ? "No products match your search"
-                                : "No products available",
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
+                    return _ProductEmptyView(
+                      isSearchResultEmpty: isSearchResultsEmpty,
                     );
                   }
 
-                  return GridView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 220,
-                      childAspectRatio: 0.65,
-                    ),
-
-                    itemCount: state.displayProducts.length,
-                    itemBuilder: (context, index) {
-                      final product = state.displayProducts[index];
-                      final isFavourite = state.favouriteIds.contains(
-                        product.id,
-                      );
-
-                      return ProductCard(
-                        product: product,
-                        isFavourite: isFavourite,
-                        onFavouriteToggle: () {
-                          context.read<ProductCubit>().toggleFavourite(
-                            product.id,
-                          );
-                        },
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  ProductDetailsPage(product: product),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  return _ProductsGridView(
+                    displayProducts: state.displayProducts,
+                    favouriteIds: state.favouriteIds,
                   );
                 }
 
@@ -114,6 +57,122 @@ class ProductListPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProductEmptyView extends StatelessWidget {
+  final bool isSearchResultEmpty;
+
+  const _ProductEmptyView({required this.isSearchResultEmpty});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isSearchResultEmpty
+                  ? Icons.search_off
+                  : Icons.inventory_2_outlined,
+              size: 60,
+              color: Theme.of(context).disabledColor,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              isSearchResultEmpty
+                  ? "No products match your search."
+                  : "No products available.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductErrorView extends StatelessWidget {
+  final String msg;
+  final VoidCallback onRetry;
+
+  const _ProductErrorView({required this.msg, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline_outlined,
+              size: 60,
+              color: Theme.of(context).disabledColor,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              msg,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 16),
+            TextButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductsGridView extends StatelessWidget {
+  final List<Product> displayProducts;
+  final Set<int> favouriteIds;
+
+  const _ProductsGridView({
+    required this.displayProducts,
+    required this.favouriteIds,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 220,
+        childAspectRatio: 0.65,
+      ),
+
+      itemCount: displayProducts.length,
+      itemBuilder: (context, index) {
+        final product = displayProducts[index];
+        final isFavourite = favouriteIds.contains(product.id);
+
+        return ProductCard(
+          product: product,
+          isFavourite: isFavourite,
+          onFavouriteToggle: () {
+            context.read<ProductCubit>().toggleFavourite(product.id);
+          },
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProductDetailsPage(product: product),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
