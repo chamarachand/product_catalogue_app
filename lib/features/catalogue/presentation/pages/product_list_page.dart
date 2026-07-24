@@ -47,7 +47,29 @@ class ProductListPage extends StatelessWidget {
 
                 if (state is ProductsLoaded) {
                   if (state.displayProducts.isEmpty) {
-                    return const Text("No products available");
+                    final isSearchResultsEmpty = state.allProducts.isNotEmpty;
+
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isSearchResultsEmpty
+                                ? Icons.search_off
+                                : Icons.inventory_2_outlined,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            isSearchResultsEmpty
+                                ? "No products match your search"
+                                : "No products available",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
                   return GridView.builder(
