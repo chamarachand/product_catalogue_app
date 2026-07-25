@@ -164,7 +164,7 @@ class _ProductsGridView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 220,
-        childAspectRatio: 0.65,
+        childAspectRatio: 0.60,
       ),
 
       itemCount: displayProducts.length,

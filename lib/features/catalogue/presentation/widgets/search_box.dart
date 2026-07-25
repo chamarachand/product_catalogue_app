@@ -26,11 +26,16 @@ class _SearchBoxState extends State<SearchBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderRadius = BorderRadius.circular(12);
+
     return Padding(
       padding: const EdgeInsets.all(12),
       child: TextField(
         controller: _searchController,
+        textInputAction: TextInputAction.search,
         decoration: InputDecoration(
+          isDense: true,
           hintText: 'Search Products...',
           prefixIcon: const Icon(Icons.search),
           suffixIcon: _searchController.text.isNotEmpty
@@ -39,7 +44,20 @@ class _SearchBoxState extends State<SearchBox> {
                   icon: const Icon(Icons.clear),
                 )
               : null,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          border: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: BorderSide(color: colorScheme.primary, width: 1),
+          ),
         ),
         onChanged: (value) {
           context.read<ProductCubit>().searchProducts(value);
