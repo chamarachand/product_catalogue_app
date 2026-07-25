@@ -160,36 +160,41 @@ class _ProductsGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 220,
-        childAspectRatio: 0.60,
-      ),
-
-      itemCount: displayProducts.length,
-      itemBuilder: (context, index) {
-        final product = displayProducts[index];
-        final isFavourite = favouriteIds.contains(product.id);
-
-        return ProductCard(
-          product: product,
-          isFavourite: isFavourite,
-          onFavouriteToggle: () {
-            context.read<ProductCubit>().toggleFavourite(product.id);
-          },
-          onTap: () {
-            FocusScope.of(context).unfocus();
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ProductDetailsPage(product: product),
-              ),
-            );
-          },
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        await context.read<ProductCubit>().fetchProducts();
       },
+      child: GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
+          childAspectRatio: 0.60,
+        ),
+
+        itemCount: displayProducts.length,
+        itemBuilder: (context, index) {
+          final product = displayProducts[index];
+          final isFavourite = favouriteIds.contains(product.id);
+
+          return ProductCard(
+            product: product,
+            isFavourite: isFavourite,
+            onFavouriteToggle: () {
+              context.read<ProductCubit>().toggleFavourite(product.id);
+            },
+            onTap: () {
+              FocusScope.of(context).unfocus();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProductDetailsPage(product: product),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
