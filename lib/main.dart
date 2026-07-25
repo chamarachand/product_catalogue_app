@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_catalogue_app/core/services/local_storage_service.dart';
+import 'package:product_catalogue_app/core/theme/app_theme.dart';
 import 'package:product_catalogue_app/features/catalogue/cubit/product_cubit.dart';
 import 'package:product_catalogue_app/features/catalogue/data/repository/product_repository.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/pages/product_list_page.dart';
+import 'package:product_catalogue_app/features/theme/cubit/theme_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -16,14 +18,24 @@ void main() async {
     localStorageService: localStorageService,
   );
 
-  runApp(MyApp(productRepository: productRepository));
+  runApp(
+    MyApp(
+      productRepository: productRepository,
+      localStorageService: localStorageService,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final ProductRepository productRepository;
-  const MyApp({super.key, required this.productRepository});
+  final LocalStorageService localStorageService;
 
-  @override
+  const MyApp({
+    super.key,
+    required this.productRepository,
+    required this.localStorageService,
+  });
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -32,13 +44,20 @@ class MyApp extends StatelessWidget {
           create: (_) =>
               ProductCubit(repository: productRepository)..fetchProducts(),
         ),
-      ],
-      child: MaterialApp(
-        title: 'Product Catalogue',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        BlocProvider(
+          create: (_) => ThemeCubit(localStorageService: localStorageService),
         ),
-        home: const ProductListPage(),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            title: 'Product Catalogue',
+            themeMode: themeMode,
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
+            home: const ProductListPage(),
+          );
+        },
       ),
     );
   }

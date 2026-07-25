@@ -25,7 +25,12 @@ void main() {
       localStorageService: localStorageService,
     );
 
-    await tester.pumpWidget(MyApp(productRepository: productRepository));
+    await tester.pumpWidget(
+      MyApp(
+        productRepository: productRepository,
+        localStorageService: localStorageService,
+      ),
+    );
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -6,6 +6,7 @@ import 'package:product_catalogue_app/features/catalogue/data/models/product.dar
 import 'package:product_catalogue_app/features/catalogue/presentation/pages/product_details_page.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/product_card.dart';
 import 'package:product_catalogue_app/features/catalogue/presentation/widgets/search_box.dart';
+import 'package:product_catalogue_app/features/theme/cubit/theme_cubit.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -13,7 +14,21 @@ class ProductListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Catalog"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("Catalog"),
+        actions: [
+          BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, themeMode) {
+              final isDark = (themeMode == ThemeMode.dark);
+
+              return IconButton(
+                onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+                icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Center(
