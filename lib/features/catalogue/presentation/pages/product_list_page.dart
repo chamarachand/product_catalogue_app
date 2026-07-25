@@ -179,6 +179,8 @@ class _ProductsGridView extends StatelessWidget {
             context.read<ProductCubit>().toggleFavourite(product.id);
           },
           onTap: () {
+            FocusScope.of(context).unfocus();
+
             Navigator.push(
               context,
               MaterialPageRoute(

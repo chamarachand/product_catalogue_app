@@ -59,6 +59,9 @@ class _SearchBoxState extends State<SearchBox> {
             borderSide: BorderSide(color: colorScheme.primary, width: 1),
           ),
         ),
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         onChanged: (value) {
           context.read<ProductCubit>().searchProducts(value);
           setState(() {});
