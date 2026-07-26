@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_catalogue_app/core/errors/exceptions.dart';
 
 import 'package:product_catalogue_app/features/catalogue/cubit/product_state.dart';
+import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
 import 'package:product_catalogue_app/features/catalogue/data/repository/product_repository.dart';
 
 class ProductCubit extends Cubit<ProductState> {
@@ -11,6 +12,10 @@ class ProductCubit extends Cubit<ProductState> {
   ProductCubit({required this.repository}) : super(ProductInitial());
 
   Future<void> fetchProducts() async {
+    final currentQuery = state is ProductsLoaded
+        ? (state as ProductsLoaded).searchQuery
+        : '';
+
     emit(ProductsLoading());
 
     try {
@@ -20,7 +25,10 @@ class ProductCubit extends Cubit<ProductState> {
       emit(
         ProductsLoaded(
           allProducts: products,
-          displayProducts: products,
+          displayProducts: currentQuery.isEmpty
+              ? products
+              : _filterProducts(products, currentQuery),
+          searchQuery: currentQuery,
           favouriteIds: savedFavourites,
         ),
       );
@@ -37,17 +45,18 @@ class ProductCubit extends Cubit<ProductState> {
   void searchProducts(String query) {
     if (state is ProductsLoaded) {
       final currentState = state as ProductsLoaded;
+      final trimmedQuery = query.trim();
 
-      final filtered = query.trim().isEmpty
+      final filtered = trimmedQuery.isEmpty
           ? currentState.allProducts
-          : currentState.allProducts
-                .where(
-                  (product) =>
-                      product.title.toLowerCase().contains(query.toLowerCase()),
-                )
-                .toList();
+          : _filterProducts(currentState.allProducts, trimmedQuery);
 
-      emit(currentState.copyWith(displayProducts: filtered));
+      emit(
+        currentState.copyWith(
+          displayProducts: filtered,
+          searchQuery: trimmedQuery,
+        ),
+      );
     }
   }
 
@@ -66,5 +75,12 @@ class ProductCubit extends Cubit<ProductState> {
 
       await repository.saveFavouriteIds(favouriteIds);
     }
+  }
+
+  List<Product> _filterProducts(List<Product> products, String query) {
+    if (query.isEmpty) return products;
+    return products
+        .where((p) => p.title.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 }
