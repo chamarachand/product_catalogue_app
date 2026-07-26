@@ -54,7 +54,7 @@ class ProductCard extends StatelessWidget {
                       ),
                       errorWidget: (context, url, error) => Container(
                         color: Colors.grey.shade200,
-                        child: const Icon(Icons.broken_image, size: 40),
+                        child: const Icon(Icons.image_not_supported, size: 40),
                       ),
                     ),
                   ),
@@ -79,18 +79,27 @@ class ProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
-                      crossAxisAlignment: .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Category
-                        // Add somee styling
                         Text(
                           product.category.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
                         ),
                         const SizedBox(height: 2),
-                        // Product Title
-                        Text(product.title, maxLines: 2, overflow: .ellipsis),
+                        // Title
+                        Text(
+                          product.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ],
                     ),
                     // Price

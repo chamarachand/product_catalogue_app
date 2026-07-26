@@ -15,7 +15,10 @@ class ProductDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Details'),
+        title: const Text(
+          'Product Details',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           BlocBuilder<ProductCubit, ProductState>(
             builder: (context, state) {

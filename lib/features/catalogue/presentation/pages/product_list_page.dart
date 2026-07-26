@@ -15,17 +15,23 @@ class ProductListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Catalog"),
+        title: const Text(
+          "Catalogue",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          BlocBuilder<ThemeCubit, ThemeMode>(
-            builder: (context, themeMode) {
-              final isDark = (themeMode == ThemeMode.dark);
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, themeMode) {
+                final isDark = (themeMode == ThemeMode.dark);
 
-              return IconButton(
-                onPressed: () => context.read<ThemeCubit>().toggleTheme(),
-                icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-              );
-            },
+                return IconButton(
+                  onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+                  icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -137,7 +143,7 @@ class _ProductErrorView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),
-            TextButton.icon(
+            FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
@@ -168,7 +174,7 @@ class _ProductsGridView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 220,
-          childAspectRatio: 0.60,
+          childAspectRatio: 0.63,
         ),
 
         itemCount: displayProducts.length,
