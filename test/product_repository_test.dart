@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:product_catalogue_app/core/errors/exceptions.dart';
 import 'package:product_catalogue_app/core/services/api_service.dart';
 import 'package:product_catalogue_app/core/services/local_storage_service.dart';
 import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
@@ -46,7 +47,7 @@ void main() {
       },
     ];
 
-    test('getProducts on success', () async {
+    test('returns a list of products on success', () async {
       // Arrange
       when(
         () => mockApiService.fetchProducts(),
@@ -62,17 +63,62 @@ void main() {
       expect(result.first.price, 19.99);
     });
 
-    test('getProducts fails', () async {
+    test('rethrows AppException when ApiService throws AppException', () async {
       // Arrange
       when(
         () => mockApiService.fetchProducts(),
-      ).thenThrow(Exception('Could not connect'));
+      ).thenThrow(const ServerException('Server failed'));
 
-      // Act and Assert
+      // Act & Assert
       expect(
         () async => await repository.getProducts(),
-        throwsA(isA<Exception>()),
+        throwsA(isA<ServerException>()),
       );
+    });
+
+    test('throws UnknownException when an generic exception occurs', () async {
+      // Arrange
+      when(
+        () => mockApiService.fetchProducts(),
+      ).thenThrow(Exception('Unexpected network error'));
+
+      // Act & Assert
+      expect(
+        () async => await repository.getProducts(),
+        throwsA(isA<UnknownException>()),
+      );
+    });
+
+    test('getFavouriteIds returns saved favourite IDs', () {
+      // Arrange
+      final favouriteIds = {1, 3, 5};
+
+      when(
+        () => mockLocalStorageService.getFavouriteIds(),
+      ).thenReturn(favouriteIds);
+
+      // Act
+      final result = repository.getFavouriteIds();
+
+      // Assert
+      expect(result, favouriteIds);
+    });
+
+    test('saveFavouriteIds saves favourite IDs', () async {
+      // Arrange
+      final favouriteIds = {2, 4};
+
+      when(
+        () => mockLocalStorageService.saveFavouriteIds(favouriteIds),
+      ).thenAnswer((_) async {});
+
+      // Act
+      await repository.saveFavouriteIds(favouriteIds);
+
+      // Assert
+      verify(
+        () => mockLocalStorageService.saveFavouriteIds(favouriteIds),
+      ).called(1);
     });
   });
 }
