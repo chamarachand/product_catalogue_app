@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:product_catalogue_app/core/errors/exceptions.dart';
 import 'package:product_catalogue_app/core/services/api_service.dart';
 import 'package:product_catalogue_app/core/services/local_storage_service.dart';
 import 'package:product_catalogue_app/features/catalogue/data/models/product.dart';
@@ -20,10 +21,13 @@ class ProductRepository {
       final products = productsRaw
           .map((product) => Product.fromJson(product))
           .toList();
-      debugPrint("Products $products");
+      if (kDebugMode) debugPrint("Products: $products");
       return products;
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception(); // change later to customer error handling
+      debugPrint("getProducts error: $e");
+      throw const UnknownException();
     }
   }
 

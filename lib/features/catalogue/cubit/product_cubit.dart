@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:product_catalogue_app/core/errors/exceptions.dart';
 
 import 'package:product_catalogue_app/features/catalogue/cubit/product_state.dart';
 import 'package:product_catalogue_app/features/catalogue/data/repository/product_repository.dart';
@@ -23,11 +24,13 @@ class ProductCubit extends Cubit<ProductState> {
           favouriteIds: savedFavourites,
         ),
       );
+    } on AppException catch (e) {
+      emit(ProductsError(e.message));
     } catch (e, stacktrace) {
       debugPrint("fetchProducts error $e");
       debugPrint("fetchProducts error stack $stacktrace");
 
-      emit(ProductsError("Unable to load products. Please try again later"));
+      emit(ProductsError("Something went wrong. Please try again."));
     }
   }
 

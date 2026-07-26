@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:product_catalogue_app/core/constants/url_constants.dart';
+import 'package:product_catalogue_app/core/errors/exceptions.dart';
 
 class ApiService {
   Future<List<dynamic>> fetchProducts() async {
@@ -9,7 +11,7 @@ class ApiService {
     debugPrint("baseUrl $baseUrl");
     final uri = Uri.parse(baseUrl);
 
-    late final http.Response response;
+    final http.Response response;
     try {
       response = await http.get(uri);
 
@@ -17,10 +19,17 @@ class ApiService {
         final Map<String, dynamic> data = jsonDecode(response.body);
         return data['products'] as List<dynamic>;
       } else {
-        throw Exception('API Error');
+        debugPrint("Server error: ${response.statusCode}");
+        throw const ServerException();
       }
+    } on SocketException catch (e) {
+      debugPrint("Network error: $e");
+      throw const NetworkException();
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Could not connect');
+      debugPrint("fetchProducts error: $e");
+      throw const UnknownException();
     }
   }
 }
