@@ -92,8 +92,7 @@ The application uses **Bloc/Cubit** for managing application state. **setState**
 
 ### ThemeCubit manages:
 
-- Light/dark theme switching
-- Theme persistence
+- Light/dark theme handling
 
 ---
 
